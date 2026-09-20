@@ -3,127 +3,1287 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>XAUUSD Scalper Backtester V1</title>
+<title>XAUUSD Scalper Backtester V2</title>
 
 <style>
 *{box-sizing:border-box}
 
 body{
- margin:0;
- background:#0b0f14;
- color:#e8edf3;
- font-family:Arial,sans-serif;
+  margin:0;
+  background:#080c11;
+  color:#e9eef5;
+  font-family:Arial,sans-serif;
 }
 
 .app{
- max-width:850px;
- margin:auto;
- padding:16px;
+  max-width:900px;
+  margin:auto;
+  padding:14px;
 }
 
-header{
- background:#121923;
- padding:18px;
- border-radius:14px;
- margin-bottom:14px;
+header,.panel{
+  background:#111821;
+  border:1px solid #202b38;
+  border-radius:14px;
+  padding:16px;
+  margin-bottom:14px;
 }
 
-h1{margin:0 0 6px}
-.sub{color:#8995a3;font-size:14px}
-
-.panel{
- background:#121923;
- border:1px solid #202b38;
- border-radius:14px;
- padding:16px;
- margin-bottom:14px;
+h1{
+  margin:0 0 6px;
+  font-size:25px;
 }
 
 h2{
- font-size:18px;
- margin-top:0;
+  font-size:18px;
+  margin:0 0 14px;
+}
+
+.sub{
+  color:#8995a3;
+  font-size:13px;
 }
 
 .grid{
- display:grid;
- grid-template-columns:repeat(2,1fr);
- gap:10px;
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:10px;
 }
 
 label{
- display:block;
- color:#9ba7b5;
- font-size:13px;
- margin-bottom:5px;
+  display:block;
+  color:#9ba7b5;
+  font-size:12px;
+  margin-bottom:5px;
 }
 
-input{
- width:100%;
- padding:11px;
- border-radius:8px;
- border:1px solid #303b49;
- background:#0b0f14;
- color:white;
+input,select{
+  width:100%;
+  padding:11px;
+  border-radius:8px;
+  border:1px solid #303b49;
+  background:#080c11;
+  color:#fff;
+  outline:none;
 }
 
 button{
- width:100%;
- padding:13px;
- margin-top:12px;
- border:0;
- border-radius:9px;
- background:#16a05d;
- color:white;
- font-weight:bold;
- font-size:15px;
+  width:100%;
+  padding:13px;
+  margin-top:10px;
+  border:0;
+  border-radius:9px;
+  background:#16a05d;
+  color:#fff;
+  font-weight:bold;
+  font-size:15px;
 }
 
 button.secondary{
- background:#273342;
+  background:#273342;
+}
+
+button.danger{
+  background:#a83c3c;
 }
 
 .stats{
- display:grid;
- grid-template-columns:repeat(2,1fr);
- gap:10px;
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:9px;
 }
 
 .stat{
- background:#0b0f14;
- border:1px solid #202b38;
- padding:13px;
- border-radius:10px;
+  background:#080c11;
+  border:1px solid #202b38;
+  padding:12px;
+  border-radius:10px;
 }
 
 .stat small{
- display:block;
- color:#8995a3;
+  display:block;
+  color:#8995a3;
 }
 
 .stat strong{
- display:block;
- margin-top:5px;
- font-size:20px;
+  display:block;
+  margin-top:5px;
+  font-size:19px;
 }
 
 #status{
- color:#9ba7b5;
- margin-top:10px;
- font-size:13px;
+  margin-top:10px;
+  color:#9ba7b5;
+  font-size:13px;
+  line-height:1.5;
+}
+
+.chart{
+  width:100%;
+  height:280px;
+  background:#080c11;
+  border:1px solid #202b38;
+  border-radius:10px;
+  overflow:hidden;
+}
+
+canvas{
+  width:100%;
+  height:100%;
 }
 
 .trade{
- border:1px solid #273342;
- border-radius:9px;
- padding:10px;
- margin-top:8px;
- font-size:13px;
+  border:1px solid #273342;
+  border-radius:9px;
+  padding:10px;
+  margin-top:8px;
+  font-size:13px;
+  line-height:1.5;
 }
 
-.win{border-left:4px solid #16a05d}
-.loss{border-left:4px solid #e04b4b}
+.win{
+  border-left:4px solid #16a05d;
+}
 
-canvas{
- width:100%;
- height:250px;
- background:#
+.loss{
+  border-left:4px solid #e04b4b;
+}
+
+.neutral{
+  border-left:4px solid #8793a0;
+}
+
+.muted{
+  color:#8995a3;
+}
+
+.green{
+  color:#35c47a;
+}
+
+.red{
+  color:#ff6969;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  font-size:12px;
+}
+
+th,td{
+  padding:8px 5px;
+  border-bottom:1px solid #202b38;
+  text-align:left;
+}
+
+th{
+  color:#8995a3;
+}
+
+.scroll{
+  overflow-x:auto;
+  max-height:420px;
+  overflow-y:auto;
+}
+
+@media(max-width:600px){
+  .grid{
+    grid-template-columns:1fr;
+  }
+
+  .stats{
+    grid-template-columns:repeat(2,1fr);
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+<header>
+  <h1>🥇 XAUUSD Scalper Backtester V2</h1>
+  <div class="sub">
+    Browser-based historical-data backtester
+  </div>
+</header>
+
+<div class="panel">
+
+<h2>1. Historical Data</h2>
+
+<input id="fileInput" type="file" accept=".csv,text/csv">
+
+<button class="secondary" onclick="loadSample()">
+Load Sample XAUUSD Data
+</button>
+
+<div id="status">
+No data loaded yet.
+</div>
+
+</div>
+
+<div class="panel">
+
+<h2>2. Strategy Settings</h2>
+
+<div class="grid">
+
+<div>
+<label>Starting Balance ($)</label>
+<input id="balance" type="number" value="100" step="1">
+</div>
+
+<div>
+<label>Risk Per Trade (%)</label>
+<input id="risk" type="number" value="1" step="0.1">
+</div>
+
+<div>
+<label>Fast EMA</label>
+<input id="fastEMA" type="number" value="20">
+</div>
+
+<div>
+<label>Slow EMA</label>
+<input id="slowEMA" type="number" value="50">
+</div>
+
+<div>
+<label>RSI Period</label>
+<input id="rsiPeriod" type="number" value="14">
+</div>
+
+<div>
+<label>RSI Buy Maximum</label>
+<input id="rsiBuy" type="number" value="70">
+</div>
+
+<div>
+<label>RSI Sell Minimum</label>
+<input id="rsiSell" type="number" value="30">
+</div>
+
+<div>
+<label>Stop Loss (price)</label>
+<input id="sl" type="number" value="3" step="0.1">
+</div>
+
+<div>
+<label>Take Profit (price)</label>
+<input id="tp" type="number" value="6" step="0.1">
+</div>
+
+<div>
+<label>Spread (price)</label>
+<input id="spread" type="number" value="0.20" step="0.01">
+</div>
+
+</div>
+
+<button onclick="runBacktest()">
+🚀 RUN BACKTEST
+</button>
+
+<button class="danger" onclick="clearAll()">
+Clear Results
+</button>
+
+</div>
+
+<div class="panel">
+
+<h2>3. Results</h2>
+
+<div class="stats">
+
+<div class="stat">
+<small>Starting Balance</small>
+<strong id="startBalance">$0</strong>
+</div>
+
+<div class="stat">
+<small>Final Balance</small>
+<strong id="finalBalance">$0</strong>
+</div>
+
+<div class="stat">
+<small>Total Trades</small>
+<strong id="totalTrades">0</strong>
+</div>
+
+<div class="stat">
+<small>Win Rate</small>
+<strong id="winRate">0%</strong>
+</div>
+
+<div class="stat">
+<small>Wins</small>
+<strong id="wins">0</strong>
+</div>
+
+<div class="stat">
+<small>Losses</small>
+<strong id="losses">0</strong>
+</div>
+
+<div class="stat">
+<small>Net Profit</small>
+<strong id="profit">$0</strong>
+</div>
+
+<div class="stat">
+<small>Max Drawdown</small>
+<strong id="drawdown">$0</strong>
+</div>
+
+</div>
+
+<div id="resultStatus" class="muted" style="margin-top:12px">
+Run a backtest to see results.
+</div>
+
+</div>
+
+<div class="panel">
+
+<h2>4. Equity Curve</h2>
+
+<div class="chart">
+<canvas id="chart"></canvas>
+</div>
+
+</div>
+
+<div class="panel">
+
+<h2>5. Trade History</h2>
+
+<div class="scroll">
+
+<table>
+
+<thead>
+<tr>
+<th>#</th>
+<th>Side</th>
+<th>Entry</th>
+<th>Exit</th>
+<th>Result</th>
+<th>P/L</th>
+</tr>
+</thead>
+
+<tbody id="tradeTable"></tbody>
+
+</table>
+
+</div>
+
+</div>
+
+</div>
+
+<script>
+
+let candles = [];
+let lastTrades = [];
+
+/* =========================
+   CSV PARSER
+========================= */
+
+function parseCSV(text){
+
+  const lines = text
+    .trim()
+    .split(/\r?\n/)
+    .filter(x => x.trim());
+
+  if(lines.length < 2){
+    throw new Error("CSV has no usable rows.");
+  }
+
+  const headers = lines[0]
+    .split(",")
+    .map(x => x.trim().toLowerCase());
+
+  const findColumn = names => {
+
+    for(const name of names){
+
+      const i = headers.indexOf(name);
+
+      if(i !== -1) return i;
+
+    }
+
+    return -1;
+  };
+
+  const dateIndex = findColumn([
+    "date",
+    "datetime",
+    "time",
+    "timestamp"
+  ]);
+
+  const openIndex = findColumn(["open"]);
+  const highIndex = findColumn(["high"]);
+  const lowIndex = findColumn(["low"]);
+  const closeIndex = findColumn(["close"]);
+
+  if(
+    openIndex === -1 ||
+    highIndex === -1 ||
+    lowIndex === -1 ||
+    closeIndex === -1
+  ){
+
+    throw new Error(
+      "CSV must contain Date, Open, High, Low and Close columns."
+    );
+
+  }
+
+  const result = [];
+
+  for(let i=1;i<lines.length;i++){
+
+    const parts = lines[i].split(",");
+
+    const o = Number(parts[openIndex]);
+    const h = Number(parts[highIndex]);
+    const l = Number(parts[lowIndex]);
+    const c = Number(parts[closeIndex]);
+
+    if(
+      Number.isFinite(o) &&
+      Number.isFinite(h) &&
+      Number.isFinite(l) &&
+      Number.isFinite(c)
+    ){
+
+      result.push({
+
+        date:
+          dateIndex === -1
+          ? String(i)
+          : parts[dateIndex],
+
+        open:o,
+        high:h,
+        low:l,
+        close:c
+
+      });
+
+    }
+
+  }
+
+  return result;
+}
+
+
+/* =========================
+   FILE IMPORT
+========================= */
+
+document
+.getElementById("fileInput")
+.addEventListener("change",function(e){
+
+  const file = e.target.files[0];
+
+  if(!file) return;
+
+  const reader = new FileReader();
+
+  reader.onload = function(){
+
+    try{
+
+      candles = parseCSV(reader.result);
+
+      document.getElementById("status").innerHTML =
+        `<span class="green">✓ Loaded ${candles.length} candles from ${file.name}</span>`;
+
+    }catch(err){
+
+      candles = [];
+
+      document.getElementById("status").innerHTML =
+        `<span class="red">Error: ${err.message}</span>`;
+
+    }
+
+  };
+
+  reader.readAsText(file);
+
+});
+
+
+/* =========================
+   SAMPLE DATA
+========================= */
+
+function loadSample(){
+
+  candles = [];
+
+  let price = 2650;
+
+  const start =
+    new Date("2026-01-01T00:00:00");
+
+  for(let i=0;i<500;i++){
+
+    const date =
+      new Date(start.getTime() + i*60000);
+
+    const wave =
+      Math.sin(i/17) * 2.2 +
+      Math.sin(i/43) * 3;
+
+    const noise =
+      (Math.random()-0.5)*3;
+
+    const open = price;
+
+    const close =
+      price + wave + noise;
+
+    const high =
+      Math.max(open,close)
+      + Math.random()*2;
+
+    const low =
+      Math.min(open,close)
+      - Math.random()*2;
+
+    candles.push({
+
+      date:date.toISOString(),
+
+      open:open,
+
+      high:high,
+
+      low:low,
+
+      close:close
+
+    });
+
+    price = close;
+
+  }
+
+  document.getElementById("status").innerHTML =
+    `<span class="green">✓ Loaded ${candles.length} sample XAUUSD candles</span>`;
+
+}
+
+
+/* =========================
+   EMA
+========================= */
+
+function calculateEMA(values,period){
+
+  const result =
+    new Array(values.length).fill(null);
+
+  if(values.length < period){
+    return result;
+  }
+
+  let sum = 0;
+
+  for(let i=0;i<period;i++){
+    sum += values[i];
+  }
+
+  let ema =
+    sum / period;
+
+  result[period-1] = ema;
+
+  const multiplier =
+    2/(period+1);
+
+  for(let i=period;i<values.length;i++){
+
+    ema =
+      (values[i]-ema)
+      * multiplier
+      + ema;
+
+    result[i] = ema;
+
+  }
+
+  return result;
+}
+
+
+/* =========================
+   RSI
+========================= */
+
+function calculateRSI(values,period){
+
+  const rsi =
+    new Array(values.length).fill(null);
+
+  if(values.length <= period){
+    return rsi;
+  }
+
+  let gains = 0;
+  let losses = 0;
+
+  for(let i=1;i<=period;i++){
+
+    const change =
+      values[i]-values[i-1];
+
+    if(change >= 0)
+      gains += change;
+    else
+      losses += Math.abs(change);
+
+  }
+
+  let avgGain =
+    gains/period;
+
+  let avgLoss =
+    losses/period;
+
+  function getRSI(){
+
+    if(avgLoss === 0) return 100;
+
+    const rs =
+      avgGain/avgLoss;
+
+    return 100-(100/(1+rs));
+
+  }
+
+  rsi[period] =
+    getRSI();
+
+  for(let i=period+1;i<values.length;i++){
+
+    const change =
+      values[i]-values[i-1];
+
+    const gain =
+      change > 0 ? change : 0;
+
+    const loss =
+      change < 0 ? Math.abs(change) : 0;
+
+    avgGain =
+      ((avgGain*(period-1))+gain)/period;
+
+    avgLoss =
+      ((avgLoss*(period-1))+loss)/period;
+
+    rsi[i] =
+      getRSI();
+
+  }
+
+  return rsi;
+}
+
+
+/* =========================
+   BACKTEST
+========================= */
+
+function runBacktest(){
+
+  if(candles.length < 60){
+
+    alert(
+      "Load historical data first, or press Load Sample XAUUSD Data."
+    );
+
+    return;
+
+  }
+
+  const startingBalance =
+    Number(document.getElementById("balance").value);
+
+  const riskPercent =
+    Number(document.getElementById("risk").value);
+
+  const fastPeriod =
+    Number(document.getElementById("fastEMA").value);
+
+  const slowPeriod =
+    Number(document.getElementById("slowEMA").value);
+
+  const rsiPeriod =
+    Number(document.getElementById("rsiPeriod").value);
+
+  const rsiBuy =
+    Number(document.getElementById("rsiBuy").value);
+
+  const rsiSell =
+    Number(document.getElementById("rsiSell").value);
+
+  const slDistance =
+    Number(document.getElementById("sl").value);
+
+  const tpDistance =
+    Number(document.getElementById("tp").value);
+
+  const spread =
+    Number(document.getElementById("spread").value);
+
+  if(
+    startingBalance <= 0 ||
+    riskPercent <= 0 ||
+    slDistance <= 0 ||
+    tpDistance <= 0
+  ){
+
+    alert("Check your strategy settings.");
+
+    return;
+
+  }
+
+  const closes =
+    candles.map(c => c.close);
+
+  const fast =
+    calculateEMA(closes,fastPeriod);
+
+  const slow =
+    calculateEMA(closes,slowPeriod);
+
+  const rsi =
+    calculateRSI(closes,rsiPeriod);
+
+  let balance =
+    startingBalance;
+
+  let peak =
+    balance;
+
+  let maxDrawdown =
+    0;
+
+  const trades = [];
+
+  const equity = [balance];
+
+  let position = null;
+
+  for(
+    let i=1;
+    i<candles.length;
+    i++
+  ){
+
+    const c =
+      candles[i];
+
+    /* Manage existing trade */
+
+    if(position){
+
+      let exit = null;
+      let result = null;
+
+      if(position.side === "BUY"){
+
+        const stop =
+          position.entry - slDistance;
+
+        const target =
+          position.entry + tpDistance;
+
+        if(c.low <= stop){
+
+          exit = stop;
+          result = "LOSS";
+
+        }
+        else if(c.high >= target){
+
+          exit = target;
+          result = "WIN";
+
+        }
+
+      }
+
+      else if(position.side === "SELL"){
+
+        const stop =
+          position.entry + slDistance;
+
+        const target =
+          position.entry - tpDistance;
+
+        if(c.high >= stop){
+
+          exit = stop;
+          result = "LOSS";
+
+        }
+        else if(c.low <= target){
+
+          exit = target;
+          result = "WIN";
+
+        }
+
+      }
+
+      if(exit !== null){
+
+        const points =
+          position.side === "BUY"
+          ? exit-position.entry
+          : position.entry-exit;
+
+        const riskMoney =
+          balance * (riskPercent/100);
+
+        const moneyPerPrice =
+          riskMoney/slDistance;
+
+        const pnl =
+          points * moneyPerPrice;
+
+        balance += pnl;
+
+        trades.push({
+
+          date:position.date,
+
+          side:position.side,
+
+          entry:position.entry,
+
+          exit:exit,
+
+          result:result,
+
+          pnl:pnl
+
+        });
+
+        equity.push(balance);
+
+        if(balance > peak)
+          peak = balance;
+
+        const dd =
+          peak-balance;
+
+        if(dd > maxDrawdown)
+          maxDrawdown = dd;
+
+        position = null;
+
+        continue;
+
+      }
+
+    }
+
+    /* Open new trade */
+
+    if(!position){
+
+      if(
+        fast[i] === null ||
+        slow[i] === null ||
+        rsi[i] === null ||
+        fast[i-1] === null ||
+        slow[i-1] === null
+      ){
+
+        continue;
+
+      }
+
+      const bullishCross =
+        fast[i] > slow[i] &&
+        fast[i-1] <= slow[i-1];
+
+      const bearishCross =
+        fast[i] < slow[i] &&
+        fast[i-1] >= slow[i-1];
+
+      if(
+        bullishCross &&
+        rsi[i] < rsiBuy
+      ){
+
+        position = {
+
+          side:"BUY",
+
+          entry:c.close + spread,
+
+          date:c.date
+
+        };
+
+      }
+
+      else if(
+        bearishCross &&
+        rsi[i] > rsiSell
+      ){
+
+        position = {
+
+          side:"SELL",
+
+          entry:c.close - spread,
+
+          date:c.date
+
+        };
+
+      }
+
+    }
+
+  }
+
+
+  /* Close remaining position */
+
+  if(position){
+
+    const last =
+      candles[candles.length-1];
+
+    const exit =
+      last.close;
+
+    const points =
+      position.side === "BUY"
+      ? exit-position.entry
+      : position.entry-exit;
+
+    const riskMoney =
+      balance * (riskPercent/100);
+
+    const moneyPerPrice =
+      riskMoney/slDistance;
+
+    const pnl =
+      points * moneyPerPrice;
+
+    balance += pnl;
+
+    trades.push({
+
+      date:position.date,
+
+      side:position.side,
+
+      entry:position.entry,
+
+      exit:exit,
+
+      result:pnl >= 0 ? "WIN":"LOSS",
+
+      pnl:pnl
+
+    });
+
+    equity.push(balance);
+
+  }
+
+
+  lastTrades =
+    trades;
+
+  showResults(
+    startingBalance,
+    balance,
+    trades,
+    maxDrawdown,
+    equity
+  );
+
+}
+
+
+/* =========================
+   RESULTS
+========================= */
+
+function showResults(
+  start,
+  final,
+  trades,
+  maxDrawdown,
+  equity
+){
+
+  const wins =
+    trades.filter(t => t.result === "WIN").length;
+
+  const losses =
+    trades.filter(t => t.result === "LOSS").length;
+
+  const winRate =
+    trades.length
+    ? (wins/trades.length)*100
+    : 0;
+
+  const profit =
+    final-start;
+
+  document.getElementById("startBalance")
+    .textContent =
+    "$"+start.toFixed(2);
+
+  document.getElementById("finalBalance")
+    .textContent =
+    "$"+final.toFixed(2);
+
+  document.getElementById("totalTrades")
+    .textContent =
+    trades.length;
+
+  document.getElementById("wins")
+    .textContent =
+    wins;
+
+  document.getElementById("losses")
+    .textContent =
+    losses;
+
+  document.getElementById("winRate")
+    .textContent =
+    winRate.toFixed(2)+"%";
+
+  document.getElementById("profit")
+    .textContent =
+    (profit >= 0 ? "+" : "")
+    +"$"+profit.toFixed(2);
+
+  document.getElementById("drawdown")
+    .textContent =
+    "$"+maxDrawdown.toFixed(2);
+
+  document.getElementById("resultStatus")
+    .innerHTML =
+    `Tested <b>${candles.length}</b> candles and generated <b>${trades.length}</b> completed trades.`;
+
+  renderTrades(trades);
+
+  drawChart(equity);
+
+}
+
+
+/* =========================
+   TRADE TABLE
+========================= */
+
+function renderTrades(trades){
+
+  const table =
+    document.getElementById("tradeTable");
+
+  table.innerHTML = "";
+
+  trades.slice().reverse().forEach((t,index)=>{
+
+    const row =
+      document.createElement("tr");
+
+    row.innerHTML = `
+
+      <td>${trades.length-index}</td>
+
+      <td class="${t.side==="BUY"?"green":"red"}">
+        ${t.side}
+      </td>
+
+      <td>${t.entry.toFixed(2)}</td>
+
+      <td>${t.exit.toFixed(2)}</td>
+
+      <td class="${t.result==="WIN"?"green":"red"}">
+        ${t.result}
+      </td>
+
+      <td class="${t.pnl>=0?"green":"red"}">
+        ${t.pnl>=0?"+":""}${t.pnl.toFixed(2)}
+      </td>
+
+    `;
+
+    table.appendChild(row);
+
+  });
+
+}
+
+
+/* =========================
+   EQUITY CHART
+========================= */
+
+function drawChart(values){
+
+  const canvas =
+    document.getElementById("chart");
+
+  const ctx =
+    canvas.getContext("2d");
+
+  const rect =
+    canvas.getBoundingClientRect();
+
+  const dpr =
+    window.devicePixelRatio || 1;
+
+  canvas.width =
+    rect.width*dpr;
+
+  canvas.height =
+    rect.height*dpr;
+
+  ctx.scale(dpr,dpr);
+
+  const width =
+    rect.width;
+
+  const height =
+    rect.height;
+
+  ctx.clearRect(
+    0,
+    0,
+    width,
+    height
+  );
+
+  if(values.length < 2)
+    return;
+
+  const min =
+    Math.min(...values);
+
+  const max =
+    Math.max(...values);
+
+  const range =
+    max-min || 1;
+
+  ctx.beginPath();
+
+  values.forEach((value,i)=>{
+
+    const x =
+      (i/(values.length-1))*width;
+
+    const y =
+      height-
+      ((value-min)/range)*(height-20)-10;
+
+    if(i===0)
+      ctx.moveTo(x,y);
+    else
+      ctx.lineTo(x,y);
+
+  });
+
+  ctx.strokeStyle =
+    "#16a05d";
+
+  ctx.lineWidth = 2;
+
+  ctx.stroke();
+
+}
+
+
+/* =========================
+   CLEAR
+========================= */
+
+function clearAll(){
+
+  document.getElementById("totalTrades")
+    .textContent="0";
+
+  document.getElementById("wins")
+    .textContent="0";
+
+  document.getElementById("losses")
+    .textContent="0";
+
+  document.getElementById("winRate")
+    .textContent="0%";
+
+  document.getElementById("profit")
+    .textContent="$0";
+
+  document.getElementById("drawdown")
+    .textContent="$0";
+
+  document.getElementById("startBalance")
+    .textContent="$0";
+
+  document.getElementById("finalBalance")
+    .textContent="$0";
+
+  document.getElementById("tradeTable")
+    .innerHTML="";
+
+  document.getElementById("resultStatus")
+    .textContent="Run a backtest to see results.";
+
+  const canvas =
+    document.getElementById("chart");
+
+  const ctx =
+    canvas.getContext("2d");
+
+  ctx.clearRect(
+    0,
+    0,
+    canvas.width,
+    canvas.height
+  );
+
+}
+
+
+/* =========================
+   START
+========================= */
+
+loadSample();
+
+</script>
+
+</body>
+ </html>
