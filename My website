@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Website</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #111;
+            color: white;
+            text-align: center;
+        }
+
+        header {
+            padding: 60px 20px;
+            background: #222;
+        }
+
+        h1 {
+            font-size: 40px;
+        }
+
+        p {
+            font-size: 18px;
+            color: #ccc;
+        }
+
+        .button {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 14px 25px;
+            background: #00c853;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+        }
+
+        section {
+            padding: 40px 20px;
+        }
+
+        footer {
+            padding: 20px;
+            background: #222;
+            color: #aaa;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h1>Welcome to My Website</h1>
+        <p>This website was created using GitHub.</p>
+
+        <a href="#about" class="button">Explore</a>
+    </header>
+
+    <section id="about">
+        <h2>About Me</h2>
+        <p>This is my first website built directly from my phone.</p>
+    </section>
+
+    <footer>
+        © 2026 My Website
+    </footer>
+
+</body>
+</html>
